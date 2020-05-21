@@ -1,0 +1,117 @@
+---
+title: "label_big_image"
+author: "Willem Weertman"
+date: "4/17/2020"
+output: html_document
+---
+
+```{r}
+
+setwd("~/R/moving_treeline/CODE")
+
+library(raster)
+library(rgdal)
+library(MASS)
+
+dat <- read.csv('../DATA/big_image_labels/dlc_tl_scan_model_3_it_2_sh2/big_text_file.txt')
+
+h <- 16209
+
+dat$x_m <- (dat$x1 + dat$x2)/2
+dat$y_m <- h - (dat$y1 + dat$y2)/2 ## python reads images top down, r reads them top up, this flips the results from python
+
+dat$l <- ((dat$x2 - dat$x1)^2 + (dat$y2 - dat$y1)^2)^(1/2)
+dat$l_col <- dat$l/max(dat$l)
+
+```
+
+```{r}
+
+plot(y_m ~ x_m, data = dat)
+
+```
+
+```{r}
+
+path.img <- '../DATA/firstwood/Undistort_001_FirstWoods_A_1_R1C1.tif'
+
+img <- stack(path.img)
+
+
+```
+
+```{r}
+
+c <- kde2d(dat$x_m, dat$y_m, n = 1000)
+
+```
+
+```{r}
+
+plot(y_m ~ x_m, 
+       data = dat, 
+       pch = 16,
+       col = rgb (0, dat$l_col , 0 , 0.5))
+
+contour (c, add = T, drawlabels = T, nlevels = 5, col = 'blue')
+
+legend ('bottom',
+        pch = 16,
+        col = 'darkgreen',
+        legend = 'Trees',
+        bty = 'n')
+
+```
+
+```{r}
+
+#path.img.save = '../DATA/big_image_labels/dlc_tl_scan_model_3_it_2_sh2/image_w_trees.tif'
+
+
+#tiff(file=path.img.save,
+#      width=16384, height=16209)
+
+plotRGB(img,
+        maxpixels = 265568256)
+
+points(y_m ~ x_m, 
+       data = dat, 
+       pch = 16,
+       col = rgb (0 , dat$l_col, 0 , 0.5))
+
+#dev.off()
+
+```
+
+
+
+```{r}
+
+#path.img.save = '../DATA/big_image_labels/dlc_tl_scan_model_3_it_2_sh2/image_w_contour.tif'
+
+#tiff(file=path.img.save,
+#      width=16384, height=16209)
+
+plotRGB(img,
+        maxpixels = 265568256)
+
+contour (c, add = T, drawlabels = F, nlevels = 5 , col = 'blue')
+
+#dev.off()
+
+```
+
+
+```{r}
+
+plotRGB(img,
+        maxpixels = 265568256)
+
+```
+
+
+
+
+
+
+

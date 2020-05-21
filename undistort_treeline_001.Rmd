@@ -1,0 +1,38 @@
+---
+title: "undistort treeline"
+author: "Willem Weertman"
+date: "3/21/2020"
+output: html_document
+---
+
+```{r}
+
+setwd("~/R/moving_treeline/CODE")
+
+library(raster)
+library(rgdal)
+
+path.img <- '../DATA/firstwood/FirstWoods_A_1_R1C1.tif'
+path.img.save <- '../DATA/firstwood/Undistort_002_FirstWoods_A_1_R1C1.tif'
+
+img <- raster(path.img)
+img.s <- stack(path.img)
+
+img.s
+
+```
+
+Attempt at using plotRGB
+
+```{r error = T}
+
+tiff(file=path.img.save,
+width=16384, height=16209)
+
+plotRGB(img.s,
+        maxpixels = 265568256)
+
+dev.off()
+
+```
+
